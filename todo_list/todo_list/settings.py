@@ -43,6 +43,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -70,7 +71,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'todo_list.wsgi.application'
 
-ASGI_APPLICATION = 'todo_lisst.asgi.application'
+ASGI_APPLICATION = "todo_list.asgi.application"
 
 
 # Database
@@ -121,7 +122,8 @@ LOGIN_URL = 'login'
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = 'static/'
-STATICFILES_DIRS = [BASE_DIR / "base/static"]
+#STATICFILES_DIRS = [BASE_DIR / "base/static"]
+STATIC_ROOT = BASE_DIR / "base/static"
 
 
 
