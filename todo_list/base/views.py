@@ -1,11 +1,16 @@
-from django.shortcuts import render, redirect
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404, render, redirect
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, FormView
 from django.contrib.auth.views import LoginView
 from django.contrib.auth import login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.forms import UserCreationForm
 from .models import Task
+from .utils import send_realtime_notifications
 from django.urls import reverse_lazy
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
+from django.contrib import messages
 
 class CustomLoginView(LoginView):
     template_name = "base/login.html"
@@ -56,19 +61,68 @@ class TaskList(LoginRequiredMixin, ListView):
 
 class TaskCreate(LoginRequiredMixin, CreateView):
     model = Task
-    fields = ['title', 'description', 'complete']
-    success_url = reverse_lazy("tasks")
+    fields = ['title', 'description', 'complete'] 
+    template_name = "base/task_form.html"
 
     def form_valid(self, form):
         form.instance.user = self.request.user
-        return super(TaskCreate, self).form_valid(form)
+        task = form.save()
 
+        channel_layer = get_channel_layer()
+        async_to_sync(channel_layer.group_send)(
+            f"user_{self.request.user.id}",
+            {
+                "type": "send_notification",
+                "message": f"Task '{task.title}' created"
+            }
+        )
+
+        if self.request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            return JsonResponse({'success': True, 'title': task.title})
+
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        if self.request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            return JsonResponse({'success': False, 'errors': form.errors})
+        return super().form_invalid(form)
+    
 class TaskUpdate(LoginRequiredMixin, UpdateView):
     model = Task
-    fields = ['title', 'description', 'complete']
-    success_url = reverse_lazy("tasks")
+    fields = ['title', 'description', 'complete'] 
+    template_name = "base/task_update.html"
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        task = form.save()
+
+        channel_layer = get_channel_layer()
+        async_to_sync(channel_layer.group_send)(
+            f"user_{self.request.user.id}",
+            {
+                "type": "send_notification",
+                "message": f"Task '{task.title}' updated"
+            }
+        )
+
+        if self.request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            return JsonResponse({'success': True, 'title': task.title})
+
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        if self.request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            return JsonResponse({'success': False, 'errors': form.errors})
+        return super().form_invalid(form)
     
 class TaskDelete(LoginRequiredMixin, DeleteView):
     model = Task
     context_object_name = "task"
     success_url = reverse_lazy('tasks')
+
+def complete_task(request, task_id):
+    task = get_object_or_404(Task, id=task_id, user=request.user)
+    task.complete = True
+    task.save()
+    send_realtime_notifications(request.user, f"Task '{task.title}' completed!")
+    return redirect('tasks')

@@ -28,10 +28,7 @@ form.addEventListener('submit', function(e) {
     })
     .then(response => response.json())
     .then(data => {
-        if (data.success) {
-            // Limpiar formulario para permitir enviar otra tarea
-            form.reset();
-        } else {
+        if (!data.success) {
             alert("Error: " + JSON.stringify(data.errors));
         }
     });

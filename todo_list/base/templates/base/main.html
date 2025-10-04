@@ -1,146 +1,72 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset='utf-8'>
     <meta http-equiv='X-UA-Compatible' content='IE=edge'>
     <title>To Do Items</title>
     <meta name='viewport' content='width=device-width, initial-scale=1'>
-    <link rel='stylesheet' type='text/css' media='screen' href='main.css'>
-    <script src='main.js'></script>
+    <link rel="stylesheet" type="text/css" href="{% static 'base/main.css' %}">
+    <script src="{% static 'base/main.js' %}"></script>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap" rel="stylesheet">
-
-    <style>
-        body{
-            background-color: #fafafa;
-            font-family: "Nunito", sans-serif;
-            padding-top: 50px;
-        }
-
-        a,
-        p {
-            color: #4b5156
-        }
-
-        .container{
-            max-width: 550px;
-            margin: auto;
-            background-color: #fff;
-            -webkit-box-shadow: 2px 2px 13px -4px rgba(0, 0, 0, 0.21);
-            box-shadow: 2px 2px 13px -4px rgba(0 ,0, 0, 0.21);
-
-        }
-
-        .header-bar{
-            display: flex;
-            justify-content: space-between;
-            color: #fff;
-            padding: 10px;
-            border-radius: 5px 5px 0 0;
-            background: linear-gradient(90deg, #578ce7 0%, #2032d5 43%, #1e39eb 100%);
-        }
-
-        .header-bar a{
-            color: rgb(247, 247, 247);
-            text-decoration: none;
-        }
-
-        .task-wrapper {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 20px;
-            background-color: #fff;
-            border-top: 1px solid rgb(226, 226, 226);
-        }
-
-        .task-title {
-            display: flex;
-        }
-
-        .task-title a {
-            text-decoration: none;
-            color: #4b5156;
-            margin-left: 10px;
-        }
-
-        .task-complete-icon {
-            height: 20px;
-            width: 20px;
-            background-color: rgb(105, 192, 105);
-            border-radius: 50%;
-        }
-
-        .task-incomplete-icon {
-            height: 20px;
-            width: 20px;
-            background-color: rgb(218, 218, 218);
-            border-radius: 50%;
-        }
-
-        .delete-link {
-            text-decoration: none;
-            font-weight: 900;
-            color: #2032d5;
-            font-size: 22px;
-            line-height: 0;
-        }
-
-        #search-add-wrapper {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px;
-        }
-
-        #add-link {
-            color: #2032d5;
-            text-decoration: none;
-            font-size: 42px;
-            text-shadow: 1px 1px #37157b;
-        }
-
-        input[type=text],
-        input[type=password],
-        textarea {
-            border: 1px solid #2032d5;
-            border-radius: 5px;
-            padding: 10px;
-            width: 90%;
-
-        }
-
-        label{
-            padding-top: 10px !important;
-            display: block;
-        }
-
-        .button {
-            border: 1px solid #2032d5;
-            background-color: #FAFAFA;
-            color: #2032d5;
-            padding: 10px;
-            font-size: 14px;
-            border-radius: 5px;
-            cursor: pointer;
-            text-decoration: none;
-
-        }
-
-        .card-body {
-            padding: 20px;
-        }
-
-    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap"
+        rel="stylesheet">
 </head>
+
 <body>
-    
+
+
+    <div id="notifications" style="position: fixed; top: 10px; right: 10px;"></div>
+
+
+
+
     <div class="container">
         {% block content %}
 
         {% endblock content%}
     </div>
+
+    <script>
+        const socket = new WebSocket(
+            (window.location.protocol === "https:" ? "wss://" : "ws://") +
+            window.location.host + '/ws/notifications/'
+        );
+
+        socket.onmessage = function (e) {
+            const data = JSON.parse(e.data);
+            const container = document.getElementById('notifications');
+
+            const div = document.createElement('div');
+            div.innerText = data.message;
+            div.className = 'notification';
+            container.appendChild(div);
+
+            // Que desaparezca después de 5 segundos
+            setTimeout(() => div.remove(), 5000);
+        };
+
+        socket.onclose = function (e) {
+            console.error('Socket closed unexpectedly');
+        };
+    </script>
+
+    <style>
+        .notification {
+            background-color: #d4edda;
+            color: #155724;
+            padding: 10px;
+            margin-bottom: 5px;
+            border-radius: 5px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+
+
 </body>
+
 </html>
