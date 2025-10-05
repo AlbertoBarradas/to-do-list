@@ -11,21 +11,28 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+import os
+import environ
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
+
+
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+env = environ.Env(
+    DEBUG=(bool, False)
+)
+
+environ.Env.read_env(BASE_DIR / ".env")
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-2$hym2gh5wra0^i%g&tohk*no-eproflhsfbfrb*asry^3o_9q'
+# Seguridad
+SECRET_KEY = env('SECRET_KEY')
+DEBUG = env('DEBUG')
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost').split(',')
 
 
 # Application definition
@@ -80,11 +87,11 @@ ASGI_APPLICATION = "todo_list.asgi.application"
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'ToDoList',
-        'USER': '',
-        'PASSWORD': '',
-        'HOST': '',
-        'PORT': '3306',
+        'NAME': env('MYSQL_DATABASE'),
+        'USER': env('MYSQL_USER'),
+        'PASSWORD': env('MYSQL_PASSWORD'),
+        'HOST': env('MYSQL_HOST'),
+        'PORT': env('MYSQL_PORT'),
         'OPTIONS': {
             'init_command': "SET sql_mode='STRICT_TRANS_TABLES'"
         }
@@ -139,11 +146,12 @@ STATIC_ROOT = BASE_DIR / "base/static"
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+
 CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [("127.0.0.1", 6379)]
-            }
+            "hosts": [(env('REDIS_HOST'), int(env('REDIS_PORT')))],
+        },
     },
 }
