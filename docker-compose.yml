@@ -1,0 +1,32 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file:
+      - ./todo_list/.env
+    depends_on:
+      - mysql
+      - redis
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+    command: ["/app/entrypoint.sh"]
+
+  mysql:
+    image: mysql:8.1
+    env_file:
+      - ./todo_list/.env
+    ports:
+      - "3308:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  redis:
+    image: redis:7
+    ports:
+      - "6381:6379"
+
+volumes:
+  mysql_data:
