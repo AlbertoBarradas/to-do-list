@@ -34,7 +34,7 @@ WORKDIR /app
 # Copiar librerías y binarios desde el builder
 COPY --from=builder /usr/local /usr/local
 
-COPY . .
+COPY . /app
 
 RUN chmod +x /app/entrypoint.sh
 
@@ -43,7 +43,5 @@ EXPOSE 8000
 WORKDIR /app/todo_list
 
 ENTRYPOINT ["/app/entrypoint.sh"]
-
-#CMD ["daphne", "-b", "0.0.0.0", "-p", "8000", "todo_list.asgi:application"]
 
 
