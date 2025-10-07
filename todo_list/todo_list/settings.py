@@ -87,11 +87,11 @@ ASGI_APPLICATION = "todo_list.asgi.application"
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': env('MYSQL_DATABASE'),
-        'USER': env('MYSQL_USER'),
-        'PASSWORD': env('MYSQL_PASSWORD'),
-        'HOST': env('MYSQL_HOST'),
-        'PORT': env('MYSQL_PORT'),
+        'NAME': os.getenv('MYSQL_DATABASE', 'ToDoList'),
+        'USER': os.getenv('MYSQL_USER', 'todo_user'),
+        'PASSWORD': os.getenv('MYSQL_PASSWORD', 'todo_pass'),
+        'HOST': os.getenv('MYSQL_HOST', 'mysql'),
+        'PORT': os.getenv('MYSQL_PORT', 3306),
         'OPTIONS': {
             'init_command': "SET sql_mode='STRICT_TRANS_TABLES'"
         }

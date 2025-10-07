@@ -25,7 +25,8 @@ FROM python:3.12-slim-bookworm
 # Install runtime dependencies for mysqlclient
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
-    default-libmysqlclient-dev && \
+    default-libmysqlclient-dev \
+    default-mysql-client && \
     rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
