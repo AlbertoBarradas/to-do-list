@@ -34,9 +34,7 @@ WORKDIR /app
 # Copiar librerías y binarios desde el builder
 COPY --from=builder /usr/local /usr/local
 
-COPY . .
-
-COPY entrypoint.sh /app/entrypoint.sh
+COPY . /app
 
 RUN chmod +x /app/entrypoint.sh
 
