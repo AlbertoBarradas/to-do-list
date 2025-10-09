@@ -36,7 +36,12 @@ Make sure to have Docker installed in your system.
 git clone https://github.com/AlbertoBarradas/to-do-list.git
 ```
 
-### 2. In the repository root directory, copy the example environment file and edit the values if needed
+### 2. Move to the repository directory
+```bash
+cd to-do-list
+```
+
+### 3. Copy the example environment file and edit the values if needed
 
 For macOS/Linux users:
 ```bash
@@ -48,12 +53,12 @@ For Windows users:
 copy todo_list\.env.example todo_list\.env
 ```
 
-### 3. Build and start the containers (make sure Docker Engine is running)
+### 4. Build and start the containers (make sure Docker Engine is running)
 ```bash
 docker compose up --build
 ```
 
-### 4. Once all the containers are running, access the app
+### 5. Once all the containers are running, access the app
 
 http://localhost:8000/
 
@@ -100,7 +105,12 @@ Asegurate de tener Docker instalado en tu sistema.
 git clone https://github.com/AlbertoBarradas/to-do-list.git
 ```
 
-### 2. En la raiz del repositorio, copia el archivo del entorno y edita los valores si es necesario.
+### 2. Navega al directorio del repositorio
+```bash
+cd to-do-list
+```
+
+### 3. En la raiz del repositorio, copia el archivo del entorno y edita los valores si es necesario.
 
 Para usuarios macOS/Linux:
 ```bash
@@ -112,12 +122,12 @@ Para usuarios Windows:
 copy todo_list\.env.example todo_list\.env
 ```
 
-### 3. Construye y ejecuta los contenedores (asegurate que Docker Engine se está ejecutando)
+### 4. Construye y ejecuta los contenedores (asegurate que Docker Engine se está ejecutando)
 ```bash
 docker compose up --build
 ```
 
-### 4. Una vez que los contenedores estan corriendo, entra al siguiente link para ver la aplicación
+### 5. Una vez que los contenedores estan corriendo, entra al siguiente link para ver la aplicación
 
 http://localhost:8000/
 
