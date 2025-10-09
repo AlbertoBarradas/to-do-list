@@ -1,6 +1,6 @@
 FROM python:3.12-slim-bookworm AS builder
 
-# Variables de entorno para Python
+# Python environment variables
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
@@ -31,7 +31,7 @@ RUN apt-get update && \
 
 WORKDIR /app
 
-# Copiar librerías y binarios desde el builder
+# Copy libraries from builder
 COPY --from=builder /usr/local /usr/local
 
 COPY . /app

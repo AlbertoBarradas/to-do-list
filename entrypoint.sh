@@ -4,7 +4,7 @@
 
 set -e
 
-echo "Esperando a que MySQL inicie..."
+echo "Waiting for MySQL to start..."
 while ! mysqladmin ping -h"$MYSQL_HOST" -u"$MYSQL_USER" -p"$MYSQL_PASSWORD" --silent; do
   sleep 2
 done
